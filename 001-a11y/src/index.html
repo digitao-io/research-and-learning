@@ -10,8 +10,168 @@
   <script src="./main.js"></script>
 </head>
 
-<body>
+<body style="max-width: 640px;">
   <h1>A11y - Keyboard & Screenreader</h1>
+  <hr>
+
+  <h2>1. Headline Hierarchy</h2>
+
+  <p>
+    At least if one uses NVDA, he should be able to use 1 to 6 keys to go
+    through different headlines. So to keep a well structured headline
+    structure is very important.
+  </p>
+
+  <hr>
+
+  <h2>2. Keyboard Accessibility</h2>
+
+  <h3>2.1. Default Tab Focusing Behaviour</h3>
+
+  <p>The interactive elements are usually "tab-able" by default:</p>
+
+  <div>
+    <a href="https://example.org/">Just a link</a>
+  </div>
+
+  <div>
+    <button>And a button</button>
+  </div>
+
+  <div>
+    <label>
+      <span>Just a random input: </span>
+      <input type="text" placeholder="And a text input">
+    </label>
+  </div>
+
+  <div>
+    <label>
+      <span>Car brands: </span>
+      <select name="cars">
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+      </select>
+    </label>
+  </div>
+
+  <div>
+    <label>
+      <input type="radio">
+      <span>This is a radio</span>
+    </label>
+  </div>
+
+  <div>
+    <label>
+      <input type="checkbox">
+      <span>This is a checkbox</span>
+    </label>
+  </div>
+
+  <div>
+    <textarea name="w3review" rows="4" cols="50">And also a text area.</textarea>
+  </div>
+
+  <p>
+    Most of them can be interacted with pressing spacebar. The only
+    exception are links, user has to press enter to interacte with it.
+  </p>
+
+  <h3>2.2. Make Something Focusable</h3>
+
+  <p tabindex="0">
+    By adding <code>tabindex="0"</code>, we can make everything tab-able.
+    This paragraph is focusable.
+  </p>
+
+  <h3>2.3. Some Considerations</h3>
+
+  <p>
+    Usually, by pressing tab, user want to jump through severl big sections,
+    but if user want to navigate through the detailed content, they should
+    use arrow keys. But there is no default behaviour (other than the items
+    in the dropdown menu) to enable user to use the arrow keys. So if we
+    want to enable the arrow key navigation, we have to implement this
+    behaviour by ourselves.
+  </p>
+
+  <div class="message-list" style="display: flex; border: 1px solid black;">
+    <ul tabindex="0"
+      aria-label="Message list. Please use arrow up or arrow down to navigate through different messages.">
+      <li class="message-item" tabindex="-1">
+        First message
+      </li>
+      <li class="message-item" tabindex="-1">
+        Second message
+      </li>
+      <li class="message-item" tabindex="-1">
+        Third message
+      </li>
+    </ul>
+    <section style="border-left: 1px solid grey;" tabindex="0" aria-label="Message content.">
+      <p>
+        This is the content of message. A quick brown fox jumps over a lazy
+        dog. Accessibility is very important.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const messageItems = document.querySelectorAll(".message-item");
+    for (let i = 0; i < messageItems.length; i++) {
+      // Prevent content scrolling while pressing arrow up and arrow down
+      messageItems[i].addEventListener('keydown', (event) => {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+
+      messageItems[i].addEventListener('keyup', (event) => {
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (i > 0) {
+            messageItems[i - 1].focus();
+          }
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (i < messageItems.length - 1) {
+            messageItems[i + 1].focus();
+          }
+        }
+      });
+    }
+
+    const messageList = document.querySelector(".message-list");
+    messageList.addEventListener('keyup', (event) => {
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        event.stopPropagation();
+
+        messageItems[messageItems.length - 1].focus();
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        messageItems[0].focus();
+      }
+    });
+  </script>
+
+  <hr>
+
+  <h2>3. Screenreader Accessibility</h2>
+
+  <p>
+    
+  </p>
 </body>
 
 </html>
