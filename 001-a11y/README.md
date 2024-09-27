@@ -1,4 +1,4 @@
-# 001. A11y
+# [001] A11y
 
 Accessibility is a big topic in the frontend development. To understand it better, here is a research about different possibilities about this topic.
 
