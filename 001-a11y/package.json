@@ -1,0 +1,9 @@
+{
+  "name": "001-a11y",
+  "scripts": {
+    "dev": "http-server src"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
