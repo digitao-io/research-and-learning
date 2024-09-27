@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>A11y - Keyboard & Screenreader</title>
-
-  <script src="./main.js"></script>
 </head>
 
 <body style="max-width: 640px;">
@@ -80,11 +78,17 @@
     exception are links, user has to press enter to interacte with it.
   </p>
 
-  <h3>2.2. Make Something Focusable</h3>
+  <h3>2.2. Make Something Tab-able and Focusable</h3>
 
   <p tabindex="0">
-    By adding <code>tabindex="0"</code>, we can make everything tab-able.
-    This paragraph is focusable.
+    By adding <code>tabindex="0"</code>, we can make everything tab-able and
+    focusable. This paragraph is both tab-able and focusable.
+  </p>
+
+  <p tabindex="-1">
+    By adding <code>tabindex="-1"</code>, we will make an element not tab-able
+    but focusable. To focus on an element with tabindex being set to -1, we
+    have to use JavaScript.
   </p>
 
   <h3>2.3. Some Considerations</h3>
@@ -92,22 +96,23 @@
   <p>
     Usually, by pressing tab, user want to jump through severl big sections,
     but if user want to navigate through the detailed content, they should
-    use arrow keys. But there is no default behaviour (other than the items
-    in the dropdown menu) to enable user to use the arrow keys. So if we
-    want to enable the arrow key navigation, we have to implement this
-    behaviour by ourselves.
+    use arrow keys. The combination of <code>role="menu"</code> and also
+    <code>role="menuitem"</code> will make this happen.
   </p>
 
   <div class="message-list" style="display: flex; border: 1px solid black;">
-    <ul tabindex="0"
-      aria-label="Message list. Please use arrow up or arrow down to navigate through different messages.">
-      <li class="message-item" tabindex="-1">
+    <ul
+      tabindex="0"
+      role="menu"
+      aria-label="Message list. Please use arrow up or arrow down to navigate through different messages."
+    >
+      <li class="message-item" tabindex="-1" role="menuitem">
         First message
       </li>
-      <li class="message-item" tabindex="-1">
+      <li class="message-item" tabindex="-1" role="menuitem">
         Second message
       </li>
-      <li class="message-item" tabindex="-1">
+      <li class="message-item" tabindex="-1" role="menuitem">
         Third message
       </li>
     </ul>
@@ -119,59 +124,54 @@
     </section>
   </div>
 
-  <script>
-    const messageItems = document.querySelectorAll(".message-item");
-    for (let i = 0; i < messageItems.length; i++) {
-      // Prevent content scrolling while pressing arrow up and arrow down
-      messageItems[i].addEventListener('keydown', (event) => {
-        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      });
+  <p>
+    In most of the cases, using the combination of specific tags or roles in
+    HTML is already sufficient for challenge of making an accessible web page
+    with keyboard. However, they cannot always cover everything in it. That's
+    why sometimes we have to write JavaScript to implement the keyboard
+    structure. 
+  </p>
 
-      messageItems[i].addEventListener('keyup', (event) => {
-        if (event.key === "ArrowUp") {
-          event.preventDefault();
-          event.stopPropagation();
-
-          if (i > 0) {
-            messageItems[i - 1].focus();
-          }
-        } else if (event.key === "ArrowDown") {
-          event.preventDefault();
-          event.stopPropagation();
-
-          if (i < messageItems.length - 1) {
-            messageItems[i + 1].focus();
-          }
-        }
-      });
-    }
-
-    const messageList = document.querySelector(".message-list");
-    messageList.addEventListener('keyup', (event) => {
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        event.stopPropagation();
-
-        messageItems[messageItems.length - 1].focus();
-      } else if (event.key === "ArrowDown") {
-        event.preventDefault();
-        event.stopPropagation();
-        
-        messageItems[0].focus();
-      }
-    });
-  </script>
+  <p>
+    Sometimes, NVDA or other screen reading software will capture the key
+    event. Since it is part of their functionality. This will cause our
+    JavaScript not able to capture the keyboard event. To prevent this,
+    use <code>role="application"</code> to tell NVDA, now we are in charge
+    of everything. But if we do this, all the sub elements won't be read
+    out by NVDA anymore. To prevent this, we can always add another role
+    to the children elements, to make NVDA read it normally.
+  </p>
 
   <hr>
 
   <h2>3. Screenreader Accessibility</h2>
 
+  <h3>3.1. Baseline</h3>
+  
   <p>
-    
+    Generally speaking, if we use the correct HTML tag with semantic meaning,
+    combined with correct and necessary roles, the web page will be also
+    screenreader accessible.
   </p>
+
+  <h3>3.2. Skip to Main Content</h3>
+
+  <p>
+    Most website has been built to put the menubar at the top of the page, it
+    is actually logically correct. However, if a screenreader user is using
+    this kind of page, he or she must go through all the content until he
+    reaches the main content of the page. To overcome this problem, we can
+    introduce a link at the beginning of the page, so that the user can
+    directly jump to the content by pressing enter.
+  </p>
+
+  <p>
+    To implement this, simply add an ID to the container of the main content,
+    and add an anchor link like <code>href="#main-content"</code> and that's
+    it.
+  </p>
+
+  <h3>3.3. Dynamic Content and Live-area</h3>
 </body>
 
 </html>
